@@ -45,6 +45,7 @@ def web_photo_uploader(
     """Upload a photo to the web archive."""
     try:
         driver = AuthorizationHandler().authorize()
+        driver.implicitly_wait(10)
         if driver.title != 'Фотоархив ИД "Коммерсантъ" | Поиск':
             logger.error("Authorization failed")
             return ""
@@ -98,6 +99,7 @@ def web_photo_uploader(
     finally:
         if os.path.exists(path_to_file):
             os.remove(path_to_file)
+        driver.quit()
 
     photo_id = extract_photo_id(current_url)
     logger.info(f"Photo ID: {photo_id}")
@@ -106,8 +108,10 @@ def web_photo_uploader(
 
 if __name__ == '__main__':
     web_photo_uploader(
-        '/Users/evgeniy/Downloads/Император_Николай_II_Александрович.jpg',
-        'Император Николай Александрович',
-        'wikimedia.org',
-        internal_shoot_id='405557'
+        '/Users/evgeniy/Pictures/2025/02_February/20250206_/20250206PEV_6158.JPG',
+        '«Жители Блокадного Ленинграда» — Санкт-Петербургская общественная организация на Невском проспекте.',
+        'Евгений Павленко',
+        # internal_shoot_id='405557'  # creative commons
+        internal_shoot_id='422377'  # my
+
     )
