@@ -68,7 +68,13 @@ async def selenium_worker():
         logger.debug(f"Selenium_worker started")
         task = await selenium_queue.get()
         logger.debug(f"Processing file in worker: {task}")
+
         try:
+            # Проверяем, что задача содержит все необходимые элементы
+            if not isinstance(task, (list, tuple)) or len(task) != 4:
+                logger.error(f"Invalid task format: {task}")
+                continue  # Пропускаем некорректную задачу
+
             # Распаковываем данные задачи
             file_path, file_name, credit, chat_id = task
 
@@ -77,14 +83,15 @@ async def selenium_worker():
             logger.debug(f"Task completed: {result}")
 
             # Отправляем результат пользователю
-            # await bot.send_message(chat_id, f"Файл {file_name} обработан. Результат: {result}")
+            await bot.send_message(chat_id, f"Файл {file_name} обработан. Результат: {result}")
         except Exception as e:
             logger.error(f"Error in selenium_worker: {e}")
             # Отправляем сообщение об ошибке
-            await bot.send_message(chat_id, f"Ошибка при обработке файла {file_name}: {e}")
+            if 'chat_id' in locals():  # Проверяем, что chat_id был определен
+                await bot.send_message(chat_id, f"Ошибка при обработке файла {file_name}: {e}")
         finally:
             # Помечаем задачу как выполненную
-            logger.debug(f"Processing file in worker: {result}")
+            logger.debug(f"Processing file in worker: Task done")
             selenium_queue.task_done()
 
 
