@@ -22,6 +22,7 @@ class AuthorizationHandler:
         password = Credentials().kp_password
         first_login = Credentials().first_login
         self.driver.get(first_login)
+        self.driver.implicitly_wait(10)
         login_input = self.driver.find_element("id", "login")
         login_input.send_keys(login)
         password_input = self.driver.find_element("id", "password")

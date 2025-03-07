@@ -13,6 +13,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from authorization import AuthorizationHandler
 from photo_uplolader.photo_id import extract_photo_id
 
+
 # logger.add("../photo_uploader.log", format="{time} {level} {message}", level="INFO")
 
 def find_element(driver, selector: Tuple[str, str], timeout: int = 5):
@@ -37,15 +38,17 @@ def fill_field(driver, field_selector: Tuple[str, str], text: str):
 
 
 def web_photo_uploader(
-    path_to_file: str,
-    image_caption: str,
-    author: str,
-    internal_shoot_id: str = '405557'
-) -> str:
+        path_to_file: str,
+        image_caption: str,
+        author: str,
+        # internal_shoot_id: str = '405557'   # creative commons
+        internal_shoot_id: str = '434484'  # sinter
+):
     """Upload a photo to the web archive."""
     try:
         driver = AuthorizationHandler().authorize()
         driver.implicitly_wait(15)
+        logger.debug(f'{driver.title = }')
         if driver.title != 'Фотоархив ИД "Коммерсантъ" | Поиск':
             logger.error("Authorization failed")
             return "Authorization failed"
@@ -61,15 +64,15 @@ def web_photo_uploader(
         logger.error(f"Timeout occurred: {e}")
         return ""
     except Exception as ex:
-        logger.error(f"An unexpected error occurred: {ex}")
+        logger.error(f"selenium unexpected error occurred: {ex}")
         return ""
 
     try:
         upload_file(driver, path_to_file, (By.XPATH, "//input[@id='InputFile']"))
         find_element(driver, (By.XPATH, "//input[@type='submit']")).click()
     except Exception as ex:
-        logger.error(f"An error occurred: {ex}")
-        return f"An error occurred: {ex}"
+        logger.error(f"Selenium error occurred: {ex}")
+        return f"Selenium error occurred: {ex}"
     try:
         description_field_selector = (By.XPATH, '//textarea[@name="DescriptionControl$Description"]')
         fill_field(driver, description_field_selector, image_caption)
@@ -94,16 +97,19 @@ def web_photo_uploader(
         logger.error(f"Element not found: {no_elem}")
         return ""
     except Exception as ex:
-        logger.error(f"An error occurred during file upload: {ex}")
-        return ""
+        logger.error(f"Selenium error occurred during file upload: {ex}")
+        return "Selenium error occurred during file upload: {ex}"
 
     finally:
+
         if os.path.exists(path_to_file):
             os.remove(path_to_file)
-        driver.quit()
 
     photo_id = extract_photo_id(current_url)
     logger.info(f"Photo ID: {photo_id}")
+    driver.quit()
+
+
     return photo_id
 
 
