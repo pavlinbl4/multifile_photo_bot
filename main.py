@@ -68,16 +68,19 @@ async def selenium_worker():
         task = await selenium_queue.get()
         logger.debug(f"Processing file in worker: {task}")
         try:
+            # Распаковываем данные задачи
+            file_path, file_name, credit, chat_id = task
+
             # Выполняем задачу
-            result = await asyncio.to_thread(web_photo_uploader, *task)
+            result = await asyncio.to_thread(web_photo_uploader, file_path, file_name, credit)
             logger.debug(f"Task completed: {result}")
 
-            # Помещаем результат в очередь результатов
-            await results_queue.put((task, result))  # Передаем задачу и результат
+            # Отправляем результат пользователю
+            await bot.send_message(chat_id, f"Файл {file_name} обработан. Результат: {result}")
         except Exception as e:
             logger.error(f"Error in selenium_worker: {e}")
-            # Помещаем ошибку в очередь результатов
-            await results_queue.put((task, f"Error: {e}"))
+            # Отправляем сообщение об ошибке
+            await bot.send_message(chat_id, f"Ошибка при обработке файла {file_name}: {e}")
         finally:
             # Помечаем задачу как выполненную
             logger.debug(f"Processing file in worker: result")
