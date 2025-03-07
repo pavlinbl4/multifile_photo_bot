@@ -167,27 +167,16 @@ async def process_single_file(uploaded_file: types.Document, message: types.Mess
 
         await save_file_to_disk(file_path, path_to_uploaded_image)
 
-        await state.update_data(path_to_uploaded_image=path_to_uploaded_image)
-
-        await message.answer(f"{hbold(message.from_user.full_name)}\n"
-                             f"вы загрузили файл\n{hbold(uploaded_file.file_name)}\n"
-                             )
-        await state.update_data(image_file_name=f"{uploaded_file.file_name}")
-
-        # получаю данные о снимке
+        # Получаем данные о кредите из состояния
         data = await state.get_data()
+        credit = data.get("credit", "Unknown")
 
-        # добавляю фото в фотоархив
-        logger.debug(f'Send file to photo_uploader { data["image_file_name"] = } {data["credit"]}')
+        # Добавляем задачу для отправки файла через воркер
+        task = (path_to_uploaded_image, uploaded_file.file_name, credit, message.chat.id)
+        await selenium_queue.put(task)
 
-        # добавляю задачу для отправки файла через worker
-        logger.debug(f"Файл  {data["image_file_name"]} ({data["path_to_uploaded_image"]}) добавлен в очередь Selenium")
-        await selenium_queue.put((data["path_to_uploaded_image"], data["image_file_name"], data["credit"]))
-
-
-        # await message.answer(text=f'Файл {data["image_file_name"]} принят в обработку. Ожидайте завершения.')
-
-
+        logger.debug(f"Файл {uploaded_file.file_name} ({path_to_uploaded_image}) добавлен в очередь Selenium")
+        await message.answer(text=f'Файл {uploaded_file.file_name} принят в обработку. Ожидайте завершения.')
 
     except Exception as e:
         logger.error(f"Error processing file {uploaded_file.file_name}: {e}")
