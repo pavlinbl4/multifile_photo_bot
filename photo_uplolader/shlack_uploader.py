@@ -47,7 +47,7 @@ def web_photo_uploader(
     """Upload a photo to the web archive."""
     try:
         driver = AuthorizationHandler().authorize()
-        driver.implicitly_wait(15)
+        driver.implicitly_wait(20)
         logger.debug(f'{driver.title = }')
         if driver.title != 'Фотоархив ИД "Коммерсантъ" | Поиск':
             logger.error("Authorization failed")
@@ -62,10 +62,10 @@ def web_photo_uploader(
 
     except TimeoutException as e:
         logger.error(f"Timeout occurred: {e}")
-        return ""
+        return f"Timeout occurred: {e}"
     except Exception as ex:
         logger.error(f"selenium unexpected error occurred: {ex}")
-        return ""
+        return f"selenium unexpected error occurred: {ex}"
 
     try:
         upload_file(driver, path_to_file, (By.XPATH, "//input[@id='InputFile']"))
@@ -91,11 +91,11 @@ def web_photo_uploader(
         logger.info(f"Uploaded photo URL: {current_url}")
 
     except FileNotFoundError as fnf_error:
-        logger.error(fnf_error)
-        return ""
+        logger.error(f"Element not found: {fnf_error}")
+        return f"Element not found: {fnf_error}"
     except NoSuchElementException as no_elem:
         logger.error(f"Element not found: {no_elem}")
-        return ""
+        return f"Element not found: {no_elem}"
     except Exception as ex:
         logger.error(f"Selenium error occurred during file upload: {ex}")
         return "Selenium error occurred during file upload: {ex}"
@@ -104,11 +104,10 @@ def web_photo_uploader(
 
         if os.path.exists(path_to_file):
             os.remove(path_to_file)
+        driver.quit()
 
     photo_id = extract_photo_id(current_url)
     logger.info(f"Photo ID: {photo_id}")
-    driver.quit()
-
 
     return photo_id
 

@@ -84,7 +84,7 @@ async def selenium_worker():
             await bot.send_message(chat_id, f"Ошибка при обработке файла {file_name}: {e}")
         finally:
             # Помечаем задачу как выполненную
-            logger.debug(f"Processing file in worker: result")
+            logger.debug(f"Processing file in worker: {result}")
             selenium_queue.task_done()
 
 
@@ -165,7 +165,7 @@ async def process_single_file(uploaded_file: types.Document, message: types.Mess
 
         uploaded_images = create_dir("Uploaded_images")
 
-        logger.info(f'{uploaded_file.file_name = }')
+        logger.debug(f'{uploaded_file.file_name = }')
         path_to_uploaded_image = f"{uploaded_images}/{uploaded_file.file_name}"
         path_to_uploaded_image = convert_to_jpeg_if_needed(path_to_uploaded_image)
 
