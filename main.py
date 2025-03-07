@@ -65,6 +65,7 @@ logger.info(">>> Запуск бота...")
 async def selenium_worker():
     while True:
         # Получаем задачу из очереди
+        logger.debug(f"Selenium_worker started")
         task = await selenium_queue.get()
         logger.debug(f"Processing file in worker: {task}")
         try:
@@ -76,7 +77,7 @@ async def selenium_worker():
             logger.debug(f"Task completed: {result}")
 
             # Отправляем результат пользователю
-            await bot.send_message(chat_id, f"Файл {file_name} обработан. Результат: {result}")
+            # await bot.send_message(chat_id, f"Файл {file_name} обработан. Результат: {result}")
         except Exception as e:
             logger.error(f"Error in selenium_worker: {e}")
             # Отправляем сообщение об ошибке
