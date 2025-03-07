@@ -20,8 +20,8 @@ import asyncio
 from image_converter.conver_image_to_jpeg import convert_image_to_jpeg
 from photo_uplolader.shlack_uploader import web_photo_uploader
 
-# создаю очередь
-queue = asyncio.Queue()
+# Создаем очередь для задач Selenium
+selenium_queue = asyncio.Queue()
 
 # Включаем логирование, чтобы не пропустить важные сообщения
 # logger.add("../photo_uploader.log", level="INFO", format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}")
@@ -42,19 +42,20 @@ logger.info(">>> Запуск бота...")
 
 
 # создаю воркер для отправки файлов
-async def photo_upload_worker():
+async def selenium_worker():
     while True:
-        data = await queue.get()
+        # Получаем задачу из очереди
+        task = await selenium_queue.get()
         try:
-            logger.debug(f"Processing file in worker: {data['image_file_name']}")
-            photo_id = web_photo_uploader(data["path_to_uploaded_image"], data["image_file_name"], data["credit"])
-            logger.info(f"Фото загружено: {photo_id}")
-            data["message"].answer(text=f'Готово!\n\n{photo_id = }')
+            logger.debug(f"Processing file in worker")
+            result = await asyncio.to_thread(web_photo_uploader, *task)
+            # Обработка результата (например, отправка сообщения)
         except Exception as e:
-            logger.error(f"Ошибка при загрузке фото: {e}")
-            await data["message"].answer("Ошибка при загрузке фото.")
+            logger.error(f"Error in selenium_worker: {e}")
         finally:
-            queue.task_done()
+            # Помечаем задачу как выполненную
+            logger.debug(f"Processing file in worker: Task done")
+            selenium_queue.task_done()
 
 
 def is_allowed_file_type(mime_type: str) -> bool:
@@ -152,19 +153,13 @@ async def process_single_file(uploaded_file: types.Document, message: types.Mess
         # добавляю фото в фотоархив
         logger.debug(f'Send file to photo_uploader { data["image_file_name"] = } {data["credit"]}')
 
-        # photo_id = web_photo_uploader(data["path_to_uploaded_image"], data["image_file_name"], data["credit"])
         # добавляю задачу для отправки файла через воркер
-        await queue.put({
-            "path_to_uploaded_image": data["path_to_uploaded_image"],
-            "image_file_name": data["image_file_name"],
-            "credit": data["credit"],
-            "message": message
-        })
+        await selenium_queue.put((data["path_to_uploaded_image"], data["image_file_name"], data["credit"]))
 
-        # photo_id = 'test'
-        #
-        # logger.info(f"id снимка получено - {photo_id}")
-        # await message.answer(text=f'Готово!\n\n{photo_id = }')
+        logger.info("Задача добавлена в очередь Selenium")
+        await message.answer(text='Файл принят в обработку. Ожидайте завершения.')
+
+
 
     except Exception as e:
         logger.error(f"Error processing file {uploaded_file.file_name}: {e}")
@@ -250,6 +245,15 @@ if __name__ == '__main__':
     async def set_main_menu():
         await bot.set_my_commands(commands=kp_uploader)
 
+    async def main():
+        # Запускаем воркер для обработки задач Selenium
+        asyncio.create_task(selenium_worker())
 
-    dp.startup.register(set_main_menu)
-    dp.run_polling(bot)
+        # Устанавливаем команды бота
+        await set_main_menu()
+
+        # Запускаем бота
+        await dp.start_polling(bot)
+
+    # Запуск основного цикла
+    asyncio.run(main())
