@@ -25,7 +25,7 @@ selenium_queue = asyncio.Queue()
 results_queue = asyncio.Queue()
 
 # Включаем логирование, чтобы не пропустить важные сообщения
-# logger.add("../photo_uploader.log", level="INFO", format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}")
+logger.add("../photo_uploader.log", level="INFO", format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}")
 
 # TOKEN = Credentials().contraption_bot
 TOKEN = Credentials().pavlinbl4_bot
@@ -42,24 +42,24 @@ dp = Dispatcher(storage=storage)
 logger.info(">>> Запуск бота...")
 
 """функция, которая будет проверять очередь результатов и отправлять сообщения пользователю:"""
-async def process_results():
-    while True:
-        # Получаем результат из очереди
-        task, result = await results_queue.get()
-        logger.debug(f"Processing result: {result}")
-
-        # Извлекаем данные из задачи
-        file_path, file_name, credit = task
-        user_message = f"Файл {file_name} обработан. Результат: {result}"
-
-        # Отправляем сообщение пользователю
-        # Здесь нужно получить chat_id, например, из состояния (state) или другого источника
-        # В вашем случае, можно передавать chat_id вместе с задачей
-        chat_id = task[3]  # Пример: chat_id передается как часть задачи
-        await bot.send_message(chat_id, user_message)
-
-        # Помечаем результат как обработанный
-        results_queue.task_done()
+# async def process_results():
+#     while True:
+#         # Получаем результат из очереди
+#         task, result = await results_queue.get()
+#         logger.debug(f"Processing result: {result}")
+#
+#         # Извлекаем данные из задачи
+#         file_path, file_name, credit = task
+#         user_message = f"Файл {file_name} обработан. Результат: {result}"
+#
+#         # Отправляем сообщение пользователю
+#         # Здесь нужно получить chat_id, например, из состояния (state) или другого источника
+#         # В вашем случае, можно передавать chat_id вместе с задачей
+#         chat_id = task[3]  # Пример: chat_id передается как часть задачи
+#         await bot.send_message(chat_id, user_message)
+#
+#         # Помечаем результат как обработанный
+#         results_queue.task_done()
 
 # создаю воркер для отправки файлов
 async def selenium_worker():
@@ -163,9 +163,10 @@ async def process_single_file(uploaded_file: types.Document, message: types.Mess
 
         logger.info(f'{uploaded_file.file_name = }')
         path_to_uploaded_image = f"{uploaded_images}/{uploaded_file.file_name}"
+        path_to_uploaded_image = convert_to_jpeg_if_needed(path_to_uploaded_image)
+
         await save_file_to_disk(file_path, path_to_uploaded_image)
 
-        path_to_uploaded_image = convert_to_jpeg_if_needed(path_to_uploaded_image)
         await state.update_data(path_to_uploaded_image=path_to_uploaded_image)
 
         await message.answer(f"{hbold(message.from_user.full_name)}\n"
@@ -179,11 +180,12 @@ async def process_single_file(uploaded_file: types.Document, message: types.Mess
         # добавляю фото в фотоархив
         logger.debug(f'Send file to photo_uploader { data["image_file_name"] = } {data["credit"]}')
 
-        # добавляю задачу для отправки файла через воркер
+        # добавляю задачу для отправки файла через worker
+        logger.debug(f"Файл  {data["image_file_name"]} ({data["path_to_uploaded_image"]}) добавлен в очередь Selenium")
         await selenium_queue.put((data["path_to_uploaded_image"], data["image_file_name"], data["credit"]))
 
-        logger.info("Задача добавлена в очередь Selenium")
-        await message.answer(text='Файл принят в обработку. Ожидайте завершения.')
+
+        # await message.answer(text=f'Файл {data["image_file_name"]} принят в обработку. Ожидайте завершения.')
 
 
 
@@ -197,7 +199,7 @@ async def process_single_file(uploaded_file: types.Document, message: types.Mess
 # и переводить в состояние ожидания ввода автора фото
 @dp.message(StateFilter(FSMFillForm.add_file))
 async def handle_allowed_user_messages(message: types.Message, state: FSMContext):
-    logger.info("handler_04 work - file send")
+    # logger.info("handler_04 work - file send")
     # logger.debug(message.document)
     # если message.document is None - значит прислали не файл и не медиа группу
     if message.document is None:
