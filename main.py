@@ -41,6 +41,25 @@ bot = Bot(TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher(storage=storage)
 logger.info(">>> Запуск бота...")
 
+"""функция, которая будет проверять очередь результатов и отправлять сообщения пользователю:"""
+async def process_results():
+    while True:
+        # Получаем результат из очереди
+        task, result = await results_queue.get()
+        logger.debug(f"Processing result: {result}")
+
+        # Извлекаем данные из задачи
+        file_path, file_name, credit = task
+        user_message = f"Файл {file_name} обработан. Результат: {result}"
+
+        # Отправляем сообщение пользователю
+        # Здесь нужно получить chat_id, например, из состояния (state) или другого источника
+        # В вашем случае, можно передавать chat_id вместе с задачей
+        chat_id = task[3]  # Пример: chat_id передается как часть задачи
+        await bot.send_message(chat_id, user_message)
+
+        # Помечаем результат как обработанный
+        results_queue.task_done()
 
 # создаю воркер для отправки файлов
 async def selenium_worker():
