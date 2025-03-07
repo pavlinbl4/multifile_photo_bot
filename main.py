@@ -172,7 +172,7 @@ async def process_single_file(uploaded_file: types.Document, message: types.Mess
 
         uploaded_images = create_dir("Uploaded_images")
 
-        logger.debug(f'{uploaded_file.file_name = }')
+        logger.info(f'{uploaded_file.file_name = }')
         path_to_uploaded_image = f"{uploaded_images}/{uploaded_file.file_name}"
         path_to_uploaded_image = convert_to_jpeg_if_needed(path_to_uploaded_image)
 
@@ -182,8 +182,11 @@ async def process_single_file(uploaded_file: types.Document, message: types.Mess
         data = await state.get_data()
         credit = data.get("credit", "Unknown")
 
-        # Добавляем задачу для отправки файла через воркер
+        # Создаем задачу
         task = (path_to_uploaded_image, uploaded_file.file_name, credit, message.chat.id)
+        logger.debug(f"Adding task to queue: {task}")
+
+        # Добавляем задачу в очередь
         await selenium_queue.put(task)
 
         logger.debug(f"Файл {uploaded_file.file_name} ({path_to_uploaded_image}) добавлен в очередь Selenium")
