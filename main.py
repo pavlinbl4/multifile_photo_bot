@@ -77,6 +77,7 @@ async def selenium_worker():
 
             # Распаковываем данные задачи
             file_path, file_name, credit, chat_id = task
+            logger.debug(f"file_path: {file_path}, file_name: {file_name}, chat_id: {chat_id}")
 
             # Выполняем задачу
             result = await asyncio.to_thread(web_photo_uploader, file_path, file_name, credit)

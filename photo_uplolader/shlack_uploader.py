@@ -89,6 +89,8 @@ def web_photo_uploader(
 
         current_url = driver.current_url
         logger.info(f"Uploaded photo URL: {current_url}")
+        photo_id = extract_photo_id(current_url)
+        logger.info(f"Photo ID: {photo_id}")
 
     except FileNotFoundError as fnf_error:
         logger.error(f"Element not found: {fnf_error}")
@@ -106,8 +108,7 @@ def web_photo_uploader(
             os.remove(path_to_file)
         driver.quit()
 
-    photo_id = extract_photo_id(current_url)
-    logger.info(f"Photo ID: {photo_id}")
+
 
     return photo_id
 
