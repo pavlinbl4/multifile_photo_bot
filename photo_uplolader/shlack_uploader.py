@@ -45,10 +45,10 @@ def web_photo_uploader(
     """Upload a photo to the web archive."""
     try:
         driver = AuthorizationHandler().authorize()
-        driver.implicitly_wait(10)
+        driver.implicitly_wait(15)
         if driver.title != 'Фотоархив ИД "Коммерсантъ" | Поиск':
             logger.error("Authorization failed")
-            return ""
+            return "Authorization failed"
 
         logger.info("Authorization successful")
         upload_link = f'https://image.kommersant.ru/photo/archive/adm/AddPhoto.aspx?shootid={internal_shoot_id}'
@@ -69,6 +69,7 @@ def web_photo_uploader(
         find_element(driver, (By.XPATH, "//input[@type='submit']")).click()
     except Exception as ex:
         logger.error(f"An error occurred: {ex}")
+        return f"An error occurred: {ex}"
     try:
         description_field_selector = (By.XPATH, '//textarea[@name="DescriptionControl$Description"]')
         fill_field(driver, description_field_selector, image_caption)

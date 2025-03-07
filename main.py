@@ -49,6 +49,7 @@ async def selenium_worker():
         try:
             logger.debug(f"Processing file in worker")
             result = await asyncio.to_thread(web_photo_uploader, *task)
+            logger.debug(f"{result = }")
             # Обработка результата (например, отправка сообщения)
         except Exception as e:
             logger.error(f"Error in selenium_worker: {e}")
@@ -172,7 +173,7 @@ async def process_single_file(uploaded_file: types.Document, message: types.Mess
 @dp.message(StateFilter(FSMFillForm.add_file))
 async def handle_allowed_user_messages(message: types.Message, state: FSMContext):
     logger.info("handler_04 work - file send")
-    logger.debug(message.document)
+    # logger.debug(message.document)
     # если message.document is None - значит прислали не файл и не медиа группу
     if message.document is None:
         logger.debug("Photo was send as PHOTO not file")
