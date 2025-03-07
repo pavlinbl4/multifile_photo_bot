@@ -22,6 +22,7 @@ from photo_uplolader.shlack_uploader import web_photo_uploader
 
 # Создаем очередь для задач Selenium
 selenium_queue = asyncio.Queue()
+results_queue = asyncio.Queue()
 
 # Включаем логирование, чтобы не пропустить важные сообщения
 # logger.add("../photo_uploader.log", level="INFO", format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}")
@@ -46,16 +47,21 @@ async def selenium_worker():
     while True:
         # Получаем задачу из очереди
         task = await selenium_queue.get()
+        logger.debug(f"Processing file in worker: {task}")
         try:
-            logger.debug(f"Processing file in worker")
+            # Выполняем задачу
             result = await asyncio.to_thread(web_photo_uploader, *task)
-            logger.debug(f"{result = }")
-            # Обработка результата (например, отправка сообщения)
+            logger.debug(f"Task completed: {result}")
+
+            # Помещаем результат в очередь результатов
+            await results_queue.put((task, result))  # Передаем задачу и результат
         except Exception as e:
             logger.error(f"Error in selenium_worker: {e}")
+            # Помещаем ошибку в очередь результатов
+            await results_queue.put((task, f"Error: {e}"))
         finally:
             # Помечаем задачу как выполненную
-            logger.debug(f"Processing file in worker: Task done")
+            logger.debug(f"Processing file in worker: result")
             selenium_queue.task_done()
 
 
