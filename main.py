@@ -25,7 +25,7 @@ selenium_queue = asyncio.Queue()
 results_queue = asyncio.Queue()
 
 # Включаем логирование, чтобы не пропустить важные сообщения
-logger.add("../photo_uploader.log", level="INFO", format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}")
+logger.add("photo_uploader.log", level="INFO", format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}")
 
 # TOKEN = Credentials().contraption_bot
 TOKEN = Credentials().pavlinbl4_bot
