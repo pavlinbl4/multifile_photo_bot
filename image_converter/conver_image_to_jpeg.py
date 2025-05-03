@@ -1,5 +1,6 @@
 from PIL import Image
 import os
+from loguru import logger
 
 
 def convert_image_to_jpeg(path_to_file: str):
@@ -15,13 +16,11 @@ def convert_image_to_jpeg(path_to_file: str):
                     img = img.convert('RGB')
                 path_to_jpeg_file = path_to_file.replace(file_ext, 'jpg')
                 img.save(path_to_jpeg_file, 'JPEG', quality=jpeg_quality)
-                print("conversion successful")
+                logger.info("conversion successful")
                 os.remove(path_to_file)
-                print("initial file deleted")
+                logger.info("initial file deleted")
         except Exception as e:
-            print(f"conversion error : {e}")
+            logger.error(f"conversion error : {e}")
     return path_to_jpeg_file
 
 
-if __name__ == '__main__':
-    print(convert_image_to_jpeg('/Users/evgeniy/PycharmProjects/shlak_kp_upload/tests/test_files/0280.tiff'))

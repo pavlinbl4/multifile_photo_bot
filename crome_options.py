@@ -20,7 +20,7 @@ def setting_chrome_options():
     # chrome_options.add_argument("--disable-dev-shm-usage")  # Отключение использования /dev/shm
     # chrome_options.add_argument("--user-data-dir=/path/to/chrome-profile")  # Указание директории профиля
     # chrome_options.add_experimental_option('detach', True)
-    # chrome_options.add_argument("--headless")  # фоновый режим
+    chrome_options.add_argument("--headless")  # фоновый режим
     # chrome_options.add_argument("--ignore-certificate-errors")  # игнорирует ошибки сертификата SSL
     # chrome_options.add_argument("--disable-cache")  # отключает кэширование в браузере
     # chrome_options.add_argument("--start-maximized")

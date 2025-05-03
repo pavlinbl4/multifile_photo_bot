@@ -27,9 +27,10 @@ results_queue = asyncio.Queue()
 # Включаем логирование, чтобы не пропустить важные сообщения
 logger.add("photo_uploader.log", level="INFO", format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}")
 
-# TOKEN = Credentials().contraption_bot
-TOKEN = Credentials().pavlinbl4_bot
-logger.info("Used pavlinbl4_bot")
+TOKEN = Credentials().contraption_bot
+# TOKEN = Credentials().pavlinbl4_bot
+# logger.info("Used pavlinbl4_bot")
+logger.info("Used contraption_bot")
 
 ALLOWED_USER_NAMES = {"PavlenkoEV"}
 
@@ -41,25 +42,7 @@ bot = Bot(TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher(storage=storage)
 logger.info(">>> Запуск бота...")
 
-"""функция, которая будет проверять очередь результатов и отправлять сообщения пользователю:"""
-# async def process_results():
-#     while True:
-#         # Получаем результат из очереди
-#         task, result = await results_queue.get()
-#         logger.debug(f"Processing result: {result}")
-#
-#         # Извлекаем данные из задачи
-#         file_path, file_name, credit = task
-#         user_message = f"Файл {file_name} обработан. Результат: {result}"
-#
-#         # Отправляем сообщение пользователю
-#         # Здесь нужно получить chat_id, например, из состояния (state) или другого источника
-#         # В вашем случае, можно передавать chat_id вместе с задачей
-#         chat_id = task[3]  # Пример: chat_id передается как часть задачи
-#         await bot.send_message(chat_id, user_message)
-#
-#         # Помечаем результат как обработанный
-#         results_queue.task_done()
+
 
 # создаю воркер для отправки файлов
 async def selenium_worker():
@@ -196,7 +179,7 @@ async def process_single_file(uploaded_file: types.Document, message: types.Mess
     except Exception as e:
         logger.error(f"Error processing file {uploaded_file.file_name}: {e}")
         await message.answer(
-            f"Произошла ошибка при обработке файла {uploaded_file.file_name}. Пожалуйста, попробуйте еще раз.")
+            f"Произошла ошибка при обработке файла {uploaded_file.file_name}. {e}")
 
 
 # handler_04 будет срабатывать, если отправлено фото

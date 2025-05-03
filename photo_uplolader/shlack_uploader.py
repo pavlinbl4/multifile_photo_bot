@@ -3,6 +3,7 @@ this function upload image to archive via web uploader
 """
 
 import os
+import time
 from typing import Tuple
 from loguru import logger
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
@@ -14,7 +15,7 @@ from authorization import AuthorizationHandler
 from photo_uplolader.photo_id import extract_photo_id
 
 
-# logger.add("../photo_uploader.log", format="{time} {level} {message}", level="INFO")
+logger.add("../photo_uploader.log", format="{time} {level} {message}", level="INFO")
 
 def find_element(driver, selector: Tuple[str, str], timeout: int = 5):
     """Wait for an element to be clickable and return it."""
@@ -80,17 +81,21 @@ def web_photo_uploader(
         author_field_selector = (By.XPATH, '//input[@name="DescriptionControl$NewPseudonym"]')
         fill_field(driver, author_field_selector, author)
 
+        current_url = driver.current_url
+        logger.info(f"Uploaded photo URL: {current_url}")
+        photo_id = extract_photo_id(current_url)
+        logger.info(f"Photo ID: {photo_id}")
+
         # find upload photo button and click it
         add_photo_button_selector = (By.XPATH, '//input[@name="AddPhotoButton"]')
         find_element(driver, add_photo_button_selector).click()
 
         wait_for_load = (By.XPATH, "//span[@id='RecentyAddedHeader']")
         find_element(driver, wait_for_load)
+        time.sleep(2)
 
-        current_url = driver.current_url
-        logger.info(f"Uploaded photo URL: {current_url}")
-        photo_id = extract_photo_id(current_url)
-        logger.info(f"Photo ID: {photo_id}")
+
+
 
     except FileNotFoundError as fnf_error:
         logger.error(f"Element not found: {fnf_error}")
@@ -100,7 +105,7 @@ def web_photo_uploader(
         return f"Element not found: {no_elem}"
     except Exception as ex:
         logger.error(f"Selenium error occurred during file upload: {ex}")
-        return "Selenium error occurred during file upload: {ex}"
+        return f"Selenium error occurred during file upload: {ex}"
 
     finally:
 
@@ -115,8 +120,8 @@ def web_photo_uploader(
 
 if __name__ == '__main__':
     web_photo_uploader(
-        '/Users/evgeniy/Pictures/2025/02_February/20250206_/20250206PEV_6158.JPG',
-        '«Жители Блокадного Ленинграда» — Санкт-Петербургская общественная организация на Невском проспекте.',
+        '/Users/evgeniy/Library/CloudStorage/GoogleDrive-798l7l39743@gmail.com/My Drive/Red/20250423PEV30018.JPG',
+        'Велосипедист пересекающий Невский проспект.',
         'Евгений Павленко',
         # internal_shoot_id='405557'  # creative commons
         internal_shoot_id='422377'  # my
