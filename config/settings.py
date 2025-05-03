@@ -1,6 +1,5 @@
 from pathlib import Path
-from loguru import logger
-from get_credentials import Credentials
+from services.get_credentials import Credentials
 
 # Пути к директориям
 BASE_DIR = Path(__file__).parent.parent
@@ -18,3 +17,5 @@ MIN_CREDIT_LENGTH = 3
 LOG_FILE = BASE_DIR / "photo_uploader.log"
 LOG_LEVEL = "INFO"
 LOG_FORMAT = "{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}"
+LOG_FILE_LEVEL = "INFO"     # Уровень для записи в файл
+LOG_CONSOLE_LEVEL = "DEBUG" # Уровень для вывода в консоль
