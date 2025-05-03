@@ -22,8 +22,8 @@ async def setup_bot_commands():
 
 # Функция для регистрации всех обработчиков
 def register_all_handlers():
-    from handlers.common import register_handlers as register_common_handlers
     from handlers.upload import register_handlers as register_upload_handlers
+    from handlers.common import register_handlers as register_common_handlers
 
-    register_common_handlers(dp)
     register_upload_handlers(dp)
+    register_common_handlers(dp)
