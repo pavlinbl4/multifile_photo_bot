@@ -11,9 +11,10 @@ from aiogram.types import Message
 from aiogram.utils.markdown import hbold
 from loguru import logger
 
+from config.bot_commands import COMMANDS
 from get_credentials import Credentials
 from check_existing_file import create_dir
-from common.bot_commands_list import kp_uploader
+# from common.bot_commands_list import kp_uploader
 
 import asyncio
 
@@ -258,7 +259,7 @@ async def handle_other_messages_2(message: types.Message):
 # start polling
 if __name__ == '__main__':
     async def set_main_menu():
-        await bot.set_my_commands(commands=kp_uploader)
+        await bot.set_my_commands(commands=COMMANDS)
 
     async def main():
         # Запускаем воркер для обработки задач Selenium

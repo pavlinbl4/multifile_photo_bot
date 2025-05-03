@@ -1,0 +1,24 @@
+photo_uploader_bot/
+├── config/
+│   ├── __init__.py
+│   ├── settings.py         # Константы, настройки приложения
+│   └── bot_commands.py     # Определения команд бота
+├── core/
+│   ├── __init__.py
+│   ├── bot.py              # Инициализация бота и диспетчера
+│   └── states.py           # Определения состояний FSM
+├── handlers/
+│   ├── __init__.py
+│   ├── common.py           # Обработчики общих команд (start, help, cancel)
+│   └── upload.py           # Обработчики загрузки файлов
+├── services/
+│   ├── __init__.py
+│   ├── file_service.py     # Логика работы с файлами
+│   ├── selenium_service.py # Логика работы с Selenium
+│   └── security.py         # Проверки доступа и безопасности
+├── utils/
+│   ├── __init__.py
+│   ├── logger.py           # Настройка логирования
+│   └── helpers.py          # Вспомогательные функции
+├── main.py                 # Точка входа в приложение
+└── requirements.txt        # Зависимости проекта
