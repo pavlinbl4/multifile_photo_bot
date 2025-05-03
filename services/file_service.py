@@ -3,7 +3,7 @@ from loguru import logger
 from config.settings import UPLOADS_DIR, ALLOWED_FILE_TYPES
 from utils.helpers import create_dir
 
-from image_converter.conver_image_to_jpeg import convert_image_to_jpeg
+from services.image_service.conver_image_to_jpeg import convert_image_to_jpeg
 
 async def save_file_to_disk(bot, file_path, destination_path):
     """Сохраняет файл, полученный от пользователя"""

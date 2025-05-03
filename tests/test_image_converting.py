@@ -1,7 +1,7 @@
 import pytest
 from PIL import Image
 import os
-from image_converter.conver_image_to_jpeg import convert_image_to_jpeg
+from services.image_service.conver_image_to_jpeg import convert_image_to_jpeg
 
 
 def test_convert_supported_file(tmpdir):
