@@ -1,7 +1,7 @@
 import asyncio
 from loguru import logger
 from core.bot import bot
-from photo_uplolader.shlack_uploader import web_photo_uploader
+from utils.shlack_uploader import web_photo_uploader
 
 # Создаем очередь для задач Selenium
 selenium_queue = asyncio.Queue()

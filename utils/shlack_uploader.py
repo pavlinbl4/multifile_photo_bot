@@ -11,8 +11,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from authorization import AuthorizationHandler
-from photo_uplolader.photo_id import extract_photo_id
+from services.authorization import AuthorizationHandler
+from utils.photo_id import extract_photo_id
 
 
 logger.add("../photo_uploader.log", format="{time} {level} {message}", level="INFO")
@@ -42,8 +42,8 @@ def web_photo_uploader(
         path_to_file: str,
         image_caption: str,
         author: str,
-        # internal_shoot_id: str = '405557'   # creative commons
-        internal_shoot_id: str = '434484'  # sinter
+        internal_shoot_id: str = '405557'   # creative commons
+        # internal_shoot_id: str = '434484'  # sinter
 ):
     """Upload a photo to the web archive."""
     try:
