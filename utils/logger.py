@@ -1,27 +1,28 @@
 import sys
 
 from loguru import logger
-from config.settings import LOG_FILE, LOG_LEVEL, LOG_FORMAT
+
+from config.settings import LOG_FILE, LOG_FORMAT, LOG_CONSOLE_LEVEL, LOG_FILE_LEVEL
 
 
 def setup_logging():
-    logger.remove()  # Удаляем стандартный обработчик
+    # Добавляем обработчик для вывода в файл
     logger.add(
         LOG_FILE,
-        level=LOG_LEVEL,
+        level=LOG_FILE_LEVEL,  # Уровень для файла
         format=LOG_FORMAT,
-        rotation="10 MB",  # Ротация по размеру файла
-        compression="zip",  # Сжатие старых логов
-        backtrace=True,     # Включаем трассировку для ошибок
-        diagnose=True       # Включаем диагностику для ошибок
+        rotation="10 MB",
+        compression="zip",
+        backtrace=True,
+        diagnose=True
     )
 
     # Добавляем обработчик для вывода в консоль
     logger.add(
         sys.stdout,
-        level=LOG_LEVEL,
+        level=LOG_CONSOLE_LEVEL,  # Уровень для консоли
         format=LOG_FORMAT,
-        colorize=True       # Включаем цветной вывод в консоль
+        colorize=True
     )
 
     logger.info(">>> Logging initialized")
