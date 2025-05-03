@@ -4,8 +4,9 @@ from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
 
-from crome_options import setting_chrome_options
-from get_credentials import Credentials
+from services.get_credentials import Credentials
+from utils.crome_options import setting_chrome_options
+
 
 
 
