@@ -27,6 +27,7 @@ async def main():
         # Закрываем соединения
         await bot.session.close()
         # Останавливаем воркер корректно
+        logger.info(">>> Bot session closed...")
         selenium_task.cancel()
 
         try:
