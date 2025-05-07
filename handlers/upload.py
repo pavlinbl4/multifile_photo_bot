@@ -54,6 +54,20 @@ def register_handlers(dp: Dispatcher):
         StateFilter(UploadForm.add_file)
     )
 
+    # Команда для завершения загрузки
+    dp.message.register(
+        finish_upload,
+        Command(commands=['finish']),
+        StateFilter(UploadForm.add_file)
+    )
+
+    # Текстовая команда для завершения загрузки
+    dp.message.register(
+        finish_upload,
+        StateFilter(UploadForm.add_file),
+        F.text.casefold() == "завершить"
+    )
+
 
 async def process_add_image_command(message: Message, state: FSMContext):
     logger.info("Command ADD_IMAGE received from authorized user")
@@ -76,7 +90,10 @@ async def process_credit_sent(message: Message, state: FSMContext):
     logger.info(f"Credit received: {message.text}")
     # Сохраняем введенное имя в хранилище
     await state.update_data(credit=message.text)
-    await message.answer(text='Спасибо!\n\nА теперь загрузите снимки как файл')
+    await message.answer(
+        text='Спасибо!\n\nА теперь загрузите снимки как файл\n\n'
+             'Когда закончите загрузку, отправьте команду /finish или напишите "Завершить"'
+    )
     # Переходим к состоянию загрузки файла
     await state.set_state(UploadForm.add_file)
 
@@ -136,7 +153,8 @@ async def handle_file_upload(message: Message, state: FSMContext):
     if message.document is None:
         logger.debug("Photo was sent as PHOTO, not as file")
         await message.answer(
-            "Отправьте фото «как файл», чтобы сохранить качество снимка"
+            "Отправьте фото «как файл», чтобы сохранить качество снимка\n"
+            "Когда закончите загрузку, отправьте команду /finish или напишите 'Завершить'"
         )
         return
 
@@ -145,3 +163,13 @@ async def handle_file_upload(message: Message, state: FSMContext):
 
     for file in files:
         await process_single_file(file, message, state)
+
+
+async def finish_upload(message: Message, state: FSMContext):
+    logger.info(f"User {message.from_user.full_name} completed file upload session")
+    await message.answer(
+        text="Загрузка файлов завершена. Спасибо!\n\n"
+             "Если вам нужно загрузить еще снимки, используйте команду /add_image"
+    )
+    # Сбрасываем состояние и очищаем данные
+    await state.clear()
