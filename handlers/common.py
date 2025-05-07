@@ -1,4 +1,4 @@
-from aiogram import F, Dispatcher
+from aiogram import Dispatcher
 from aiogram.filters import Command, CommandStart, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
@@ -50,12 +50,25 @@ async def process_help_command(message: Message):
         text='Этот бот помогает добавлять фото в архив\n\n'
              'Чтобы перейти к отправке фото\n'
              'отправьте команду /add_image\n'
-             'Без указания автора фото бот работать не будет!!!'
+             'Без указания автора фото бот работать не будет!!!\n\n'
+             'Команды:\n'
+             '/add_image - начать загрузку фото\n'
+             '/finish - завершить текущую сессию загрузки\n'
+             '/cancel - отменить текущую операцию'
     )
 
 
 async def process_cancel_command_state(message: Message, state: FSMContext):
     logger.info("Command CANCEL received")
+    current_state = await state.get_state()
+    
+    if current_state is None:
+        await message.answer(
+            text='Нечего отменять. Вы не выполняете никаких операций.\n'
+                 'Чтобы начать загрузку фото, отправьте команду /add_image'
+        )
+        return
+        
     await message.answer(
         text='Вы прервали работу\n\n'
              'Чтобы вернуться к загрузке фото\n '

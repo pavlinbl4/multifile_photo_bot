@@ -12,10 +12,12 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 from services.authorization import AuthorizationHandler
+from utils.logger import setup_logging
 from utils.photo_id import extract_photo_id
 
 
-logger.add("../photo_uploader.log", format="{time} {level} {message}", level="INFO")
+# logger.add("../photo_uploader.log", format="{time} {level} {message}", level="INFO")
+setup_logging()
 
 def find_element(driver, selector: Tuple[str, str], timeout: int = 5):
     """Wait for an element to be clickable and return it."""
@@ -42,8 +44,8 @@ def web_photo_uploader(
         path_to_file: str,
         image_caption: str,
         author: str,
-        internal_shoot_id: str = '405557'   # creative commons
-        # internal_shoot_id: str = '434484'  # sinter
+        # internal_shoot_id: str = '405557'   # creative commons
+        internal_shoot_id: str = '434484'  # sinter
 ):
     """Upload a photo to the web archive."""
     try:
