@@ -1,7 +1,7 @@
 import asyncio
 from loguru import logger
 
-from core import bot
+# УДАЛИТЬ импорт бота: from core import bot
 from utils.shlack_uploader import web_photo_uploader
 
 # Создаем очередь для задач Selenium
@@ -26,8 +26,8 @@ async def add_upload_task(file_path, file_name, credit, chat_id):
     logger.debug(f"Added task to queue: {task}")
     return task
 
-
-async def selenium_worker():
+# Добавить аргумент bot в функцию
+async def selenium_worker(bot):
     """Воркер для обработки задач Selenium"""
     logger.info("Selenium worker started")
 
@@ -47,7 +47,7 @@ async def selenium_worker():
                 )
                 logger.debug(f"Task completed: {result}")
 
-                # Отправляем результат пользователю
+                # Использовать переданный экземпляр бота
                 await bot.send_message(
                     task.chat_id,
                     f"Файл {task.file_name} обработан. Результат: {result}"
