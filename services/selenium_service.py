@@ -1,20 +1,11 @@
 import asyncio
 from loguru import logger
-from aiogram import Bot
 
+from core import bot
 from utils.shlack_uploader import web_photo_uploader
 
 # Создаем очередь для задач Selenium
 selenium_queue = asyncio.Queue()
-# Глобальная переменная для хранения инстанса бота
-bot_instance = None
-
-
-def set_bot(bot: Bot):
-    """Устанавливает глобальный экземпляр бота для воркера"""
-    global bot_instance
-    bot_instance = bot
-    logger.debug("Bot instance set for selenium worker")
 
 
 class UploadTask:
@@ -42,12 +33,6 @@ async def selenium_worker():
 
     while True:
         try:
-            # Проверяем, установлен ли бот
-            if bot_instance is None:
-                logger.warning("Bot instance not set, waiting...")
-                await asyncio.sleep(1)
-                continue
-
             # Получаем задачу из очереди
             task = await selenium_queue.get()
             logger.debug(f"Processing task: {task}")
@@ -63,14 +48,13 @@ async def selenium_worker():
                 logger.debug(f"Task completed: {result}")
 
                 # Отправляем результат пользователю
-                await bot_instance.send_message(
+                await bot.send_message(
                     task.chat_id,
                     f"Файл {task.file_name} обработан. Результат: {result}"
                 )
             except Exception as e:
                 logger.error(f"Error processing task {task}: {e}")
-                # Отправляем сообщение об ошибке пользователю
-                await bot_instance.send_message(
+                await bot.send_message(
                     task.chat_id,
                     f"Ошибка при обработке файла {task.file_name}: {e}"
                 )
