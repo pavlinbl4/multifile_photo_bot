@@ -6,7 +6,9 @@ from aiogram.types import Message
 from aiogram.utils.markdown import hbold
 from loguru import logger
 
+
 from core.states import UploadForm
+from handlers.common import process_cancel_command_state
 from services.file_service import (
     save_file_to_disk,
     convert_to_jpeg_if_needed,
@@ -48,9 +50,17 @@ def register_handlers(dp: Dispatcher):
         F.text.len() < MIN_CREDIT_LENGTH
     )
 
-    # Обработка загрузки файла
+    # Добавляем обработчик /cancel для состояния ввода кредита
     dp.message.register(
-        handle_file_upload,
+        process_cancel_command_state,
+        Command(commands='cancel'),
+        StateFilter(UploadForm.add_credit)
+    )
+
+    # Добавляем обработчик /cancel для состояния загрузки файлов
+    dp.message.register(
+        process_cancel_command_state,
+        Command(commands='cancel'),
         StateFilter(UploadForm.add_file)
     )
 
@@ -67,6 +77,14 @@ def register_handlers(dp: Dispatcher):
         StateFilter(UploadForm.add_file),
         F.text.casefold() == "завершить"
     )
+
+    # Обработка загрузки файла
+    dp.message.register(
+        handle_file_upload,
+        StateFilter(UploadForm.add_file)
+    )
+
+
 
 
 async def process_add_image_command(message: Message, state: FSMContext):
@@ -150,11 +168,12 @@ async def process_single_file(file, message: Message, state: FSMContext):
 async def handle_file_upload(message: Message, state: FSMContext):
     logger.debug("File upload handler triggered")
 
-    if message.document is None:
-        logger.debug("Photo was sent as PHOTO, not as file")
+    # Явная проверка на текстовые сообщения
+    if not message.document and not message.photo:
+        logger.debug("Non-file message received")
         await message.answer(
-            "Отправьте фото «как файл», чтобы сохранить качество снимка\n"
-            "Когда закончите загрузку, отправьте команду /finish или напишите 'Завершить'"
+            "Пожалуйста, отправляйте фото как файлы.\n"
+            "Для завершения отправьте /finish или 'Завершить'"
         )
         return
 
