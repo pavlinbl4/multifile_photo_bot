@@ -19,6 +19,7 @@ def setup_bot():
     storage = MemoryStorage()
 
     # Создаем объекты бота и диспетчера
+    logger.info(f'Token type: {type(TOKEN)}')
     bot = Bot(TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 
 
