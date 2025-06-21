@@ -26,6 +26,7 @@ async def add_upload_task(file_path, file_name, credit, chat_id):
     logger.debug(f"Added task to queue: {task}")
     return task
 
+
 # Добавить аргумент bot в функцию
 async def selenium_worker(bot):
     """Воркер для обработки задач Selenium"""
