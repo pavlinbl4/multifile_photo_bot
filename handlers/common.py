@@ -61,14 +61,14 @@ async def process_help_command(message: Message):
 async def process_cancel_command_state(message: Message, state: FSMContext):
     logger.info("Command CANCEL received")
     current_state = await state.get_state()
-    
+
     if current_state is None:
         await message.answer(
             text='Нечего отменять. Вы не выполняете никаких операций.\n'
                  'Чтобы начать загрузку фото, отправьте команду /add_image'
         )
         return
-        
+
     await message.answer(
         text='Вы прервали работу\n\n'
              'Чтобы вернуться к загрузке фото\n '
