@@ -21,6 +21,3 @@ class Credentials:
         self.ftp_pass = os.getenv('FTP_PASS')
         self.ftp_login = os.getenv('FTP_LOGIN')
         self.contraption_bot = os.getenv('CONTRAPTION_BOT')
-
-
-
