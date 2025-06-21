@@ -1,10 +1,9 @@
 import asyncio
 from loguru import logger
 
-from core.bot import setup_bot, setup_bot_commands, register_all_handlers
-
-from services.selenium_service import selenium_worker
 from core.bot import setup_bot, register_all_handlers, setup_bot_commands
+from services.selenium_service import selenium_worker
+
 
 async def main():
     # Настраиваем логирование
