@@ -15,9 +15,9 @@ from services.authorization import AuthorizationHandler
 from utils.logger import setup_logging
 from utils.photo_id import extract_photo_id
 
-
 # logger.add("../photo_uploader.log", format="{time} {level} {message}", level="INFO")
 setup_logging()
+
 
 def find_element(driver, selector: Tuple[str, str], timeout: int = 5):
     """Wait for an element to be clickable and return it."""
@@ -114,8 +114,6 @@ def web_photo_uploader(
         if os.path.exists(path_to_file):
             os.remove(path_to_file)
         driver.quit()
-
-
 
     return photo_id
 
