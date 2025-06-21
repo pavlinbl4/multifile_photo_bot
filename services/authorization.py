@@ -8,8 +8,6 @@ from services.get_credentials import Credentials
 from utils.crome_options import setting_chrome_options
 
 
-
-
 class AuthorizationHandler:
     def __init__(self):
         self.service = Service(ChromeDriverManager().install())
