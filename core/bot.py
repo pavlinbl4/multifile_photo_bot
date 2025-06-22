@@ -22,7 +22,6 @@ def setup_bot():
     logger.info(f'Token type: {type(TOKEN)}')
     bot = Bot(TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 
-
     # Инициализация диспетчера
     dp = Dispatcher(storage=storage)
 
@@ -34,7 +33,7 @@ def setup_bot():
 
 
 # Функция для установки команд бота
-async def setup_bot_commands(bot:Bot):
+async def setup_bot_commands(bot: Bot):
     """
         Установка команд бота
 
@@ -67,6 +66,5 @@ async def on_shutdown(dispatcher: Dispatcher):
 
     # Закрываем соединения и освобождаем ресурсы
     await dispatcher.storage.close()
-
 
     logger.info("Bot has been shut down")
