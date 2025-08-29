@@ -15,6 +15,7 @@ from services.file_service import (
     is_valid_file,
     prepare_upload_path
 )
+from services.image_service.conver_image_to_jpeg import convert_image_to_jpeg
 from services.selenium_service import add_upload_task
 from services.security import is_user_allowed, log_unauthorized_access
 from config.settings import MIN_CREDIT_LENGTH
@@ -145,7 +146,10 @@ async def process_single_file(file, message: Message, state: FSMContext):
         saved_path = await save_file_to_disk(message.bot, file_path, str(destination_path))
 
         # Конвертируем в JPEG при необходимости
-        final_path = convert_to_jpeg_if_needed(saved_path)
+        # final_path = convert_to_jpeg_if_needed(saved_path)
+
+        # конвертируем в JPEG и jpeg тоже так как бывает, что это webp
+        final_path = convert_image_to_jpeg(saved_path)
 
         # Получаем кредит из состояния
         data = await state.get_data()
