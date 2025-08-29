@@ -11,6 +11,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
+from config.settings import INTERNAL_SHOOT_ID, BASE_UPLOAD_LINK
 from services.authorization import AuthorizationHandler
 from utils.logger import setup_logging
 from utils.photo_id import extract_photo_id
@@ -45,7 +46,7 @@ def web_photo_uploader(
         image_caption: str,
         author: str,
         # internal_shoot_id: str = '405557'   # creative commons
-        internal_shoot_id: str = '434484'  # sinter
+        internal_shoot_id: str = INTERNAL_SHOOT_ID  # sinter
 ):
     """Upload a photo to the web archive."""
     try:
@@ -57,7 +58,7 @@ def web_photo_uploader(
             return "Authorization failed"
 
         logger.info("Authorization successful")
-        upload_link = f'https://image.kommersant.ru/photo/archive/adm/AddPhoto.aspx?shootid={internal_shoot_id}'
+        upload_link = f'{BASE_UPLOAD_LINK}{internal_shoot_id}'
         driver.get(upload_link)
 
         logger.info(f"Page title: {driver.title}")
