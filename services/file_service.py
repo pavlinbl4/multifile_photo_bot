@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from loguru import logger
 from config.settings import UPLOADS_DIR, ALLOWED_FILE_TYPES
@@ -18,6 +19,11 @@ def convert_to_jpeg_if_needed(file_path):
     if Path(file_path).suffix.lower() not in ['.jpeg', '.jpg']:
         return convert_image_to_jpeg(file_path)
     return file_path
+
+def delete_not_jpeg(file_path):
+    "delete not jpeg image file"
+    if Path(file_path).suffix.lower() not in ['.jpeg', '.jpg']:
+        os.remove(file_path)
 
 
 def is_valid_file(mime_type):
