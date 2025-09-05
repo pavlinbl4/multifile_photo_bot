@@ -21,7 +21,7 @@ def convert_to_jpeg_if_needed(file_path):
     return file_path
 
 def delete_not_jpeg(file_path):
-    "delete not jpeg image file"
+    """delete not jpeg image file"""
     if Path(file_path).suffix.lower() not in ['.jpeg', '.jpg']:
         os.remove(file_path)
 

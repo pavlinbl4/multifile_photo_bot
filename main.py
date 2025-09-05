@@ -8,8 +8,6 @@ from services.selenium_service import selenium_worker
 
 
 async def main():
-
-
     # Настройка и запуск бота
     bot, dp = setup_bot()
     logger.info('Bot started')

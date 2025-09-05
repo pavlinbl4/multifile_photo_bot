@@ -11,7 +11,7 @@ from core.states import UploadForm
 from handlers.common import process_cancel_command_state
 from services.file_service import (
     save_file_to_disk,
-    convert_to_jpeg_if_needed,
+    # convert_to_jpeg_if_needed,
     is_valid_file,
     prepare_upload_path
 )
