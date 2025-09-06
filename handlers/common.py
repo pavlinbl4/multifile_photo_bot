@@ -2,9 +2,30 @@ from aiogram import Dispatcher
 from aiogram.filters import Command, CommandStart, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
-from aiogram.types import Message
+from aiogram.types import Message, KeyboardButton, ReplyKeyboardMarkup
 from aiogram.utils.markdown import hbold
 from loguru import logger
+
+
+# Создаем клавиатуру для выбора съемки
+def get_shooter_keyboard():
+    keyboard = ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text="Shoot 1"), KeyboardButton(text="Shoot 2")],
+            [KeyboardButton(text="Shoot 3"), KeyboardButton(text="Shoot 4")]
+        ],
+        resize_keyboard=True,
+        one_time_keyboard=True
+    )
+    return keyboard
+
+# Соответствие текста кнопок внутренним идентификаторам
+SHOOTER_MAPPING = {
+    "Shoot 1": "shooter_1",
+    "Shoot 2": "shooter_2", 
+    "Shoot 3": "shooter_3",
+    "Shoot 4": "shooter_4"
+}
 
 
 def register_handlers(dp: Dispatcher):
