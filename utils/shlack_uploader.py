@@ -11,13 +11,10 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from config.settings import INTERNAL_SHOOT_ID, BASE_UPLOAD_LINK
+# from config.settings import INTERNAL_SHOOT_ID, BASE_UPLOAD_LINK
+from config.settings import BASE_UPLOAD_LINK
 from services.authorization import AuthorizationHandler
-from utils.logger import setup_logging
 from utils.photo_id import extract_photo_id
-
-# logger.add("../photo_uploader.log", format="{time} {level} {message}", level="INFO")
-setup_logging()
 
 
 def find_element(driver, selector: Tuple[str, str], timeout: int = 5):
@@ -45,8 +42,7 @@ def web_photo_uploader(
         path_to_file: str,
         image_caption: str,
         author: str,
-        # internal_shoot_id: str = '405557'   # creative commons
-        internal_shoot_id: str = INTERNAL_SHOOT_ID  # sinter
+        internal_shoot_id: str
 ):
     """Upload a photo to the web archive."""
     try:
@@ -117,14 +113,3 @@ def web_photo_uploader(
         driver.quit()
 
     return photo_id
-
-
-if __name__ == '__main__':
-    web_photo_uploader(
-        '/Users/evgeniy/Library/CloudStorage/GoogleDrive-798l7l39743@gmail.com/My Drive/Red/20250423PEV30018.JPG',
-        'Велосипедист пересекающий Невский проспект.',
-        'Евгений Павленко',
-        # internal_shoot_id='405557'  # creative commons
-        internal_shoot_id='422377'  # my
-
-    )
