@@ -183,6 +183,8 @@ async def handle_file_upload(message: Message, state: FSMContext):
 
     # Обрабатываем один или несколько файлов
     files = message.document if isinstance(message.document, list) else [message.document]
+    logger.debug(f"handle_file_upload - Files received: {files}")
+    logger.debug(f"{await state.get_data()}")
 
     for file in files:
         await process_single_file(file, message, state)
