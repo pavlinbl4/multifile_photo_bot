@@ -6,12 +6,10 @@ from aiogram.types import Message
 from aiogram.utils.markdown import hbold
 from loguru import logger
 
-
 from core.states import UploadForm
 from handlers.common import process_cancel_command_state
 from services.file_service import (
     save_file_to_disk,
-    # convert_to_jpeg_if_needed,
     is_valid_file,
     prepare_upload_path
 )
@@ -86,8 +84,6 @@ def register_handlers(dp: Dispatcher):
     )
 
 
-
-
 async def process_add_image_command(message: Message, state: FSMContext):
     logger.info("Command ADD_IMAGE received from authorized user")
     await message.answer(text="Укажите автора/правообладателя снимка")
@@ -113,6 +109,11 @@ async def process_credit_sent(message: Message, state: FSMContext):
         text='Спасибо!\n\nА теперь загрузите снимки как файл\n\n'
              'Когда закончите загрузку, отправьте команду /finish или напишите "Завершить"'
     )
+    # Получаем данные из состояния
+    data = await state.get_data()
+    internal_shoot_id = data.get('internal_shoot_id')
+    logger.debug(f'{internal_shoot_id = }')
+
     # Переходим к состоянию загрузки файла
     await state.set_state(UploadForm.add_file)
 
@@ -145,9 +146,6 @@ async def process_single_file(file, message: Message, state: FSMContext):
         # Сохраняем файл
         saved_path = await save_file_to_disk(message.bot, file_path, str(destination_path))
 
-        # Конвертируем в JPEG при необходимости
-        # final_path = convert_to_jpeg_if_needed(saved_path)
-
         # конвертируем в JPEG и jpeg тоже так как бывает, что это webp
         final_path = convert_image_to_jpeg(saved_path)
 
@@ -155,8 +153,10 @@ async def process_single_file(file, message: Message, state: FSMContext):
         data = await state.get_data()
         credit = data.get("credit", "Unknown")
 
+        internal_shoot_id = data.get('internal_shoot_id')
+        logger.debug(f'Shoot number {internal_shoot_id = }')
         # Добавляем задачу в очередь
-        await add_upload_task(final_path, file.file_name, credit, message.chat.id)
+        await add_upload_task(final_path, file.file_name, credit, message.chat.id, internal_shoot_id)
 
         await message.answer(
             text=f'Файл {file.file_name} принят в обработку. Ожидайте завершения.'
