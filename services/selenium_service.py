@@ -9,19 +9,21 @@ selenium_queue = asyncio.Queue()
 
 
 class UploadTask:
-    def __init__(self, file_path, file_name, credit, chat_id):
+    def __init__(self, file_path, file_name, credit, chat_id, internal_shoot_id):
         self.file_path = file_path
         self.file_name = file_name
         self.credit = credit
         self.chat_id = chat_id
+        self.internal_shoot_id = internal_shoot_id
 
     def __str__(self):
         return f"Task({self.file_name}, credit={self.credit})"
 
 
-async def add_upload_task(file_path, file_name, credit, chat_id):
+async def add_upload_task(file_path, file_name, credit, chat_id, internal_shoot_id):
     """Добавляет задачу в очередь загрузки"""
-    task = UploadTask(file_path, file_name, credit, chat_id)
+    task = UploadTask(file_path, file_name, credit, chat_id, internal_shoot_id)
+    logger.debug(f"{task.__str__()}")
     await selenium_queue.put(task)
     logger.debug(f"Added task to queue: {task}")
     return task
@@ -44,7 +46,8 @@ async def selenium_worker(bot):
                     web_photo_uploader,
                     task.file_path,
                     task.file_name,
-                    task.credit
+                    task.credit,
+                    task.internal_shoot_id  # ← ДОБАВЬТЕ ЭТУ СТРОКУ
                 )
                 logger.debug(f"Task completed: {result}")
 
