@@ -19,11 +19,4 @@ BASE_UPLOAD_LINK = 'https://image.kommersant.ru/photo/archive/adm/AddPhoto.aspx?
 ALLOWED_FILE_TYPES = {'image/jpeg', 'image/png', 'image/x-tiff'}
 MIN_CREDIT_LENGTH = 3
 
-# Настройки логирования
-LOG_FILE = BASE_DIR / "photo_uploader.log"
-LOG_LEVEL = "INFO"
-LOG_FORMAT = "{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}"
-LOG_FILE_LEVEL = "INFO"  # Уровень для записи в файл
-LOG_CONSOLE_LEVEL = "DEBUG"  # Уровень для вывода в консоль
 
-INTERNAL_SHOOT_ID = "434484"
