@@ -139,6 +139,8 @@ async def process_single_file(file, message: Message, state: FSMContext):
         file_id = file.file_id
         file_obj = await message.bot.get_file(file_id)
         file_path = file_obj.file_path
+        file_caption = message.caption
+        logger.debug(f'{file_id = }, {file_path = }, {file_caption = }')
 
         # Подготавливаем путь для сохранения файла
         destination_path = prepare_upload_path(file.file_name)
