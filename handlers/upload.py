@@ -158,7 +158,7 @@ async def process_single_file(file, message: Message, state: FSMContext):
         internal_shoot_id = data.get('internal_shoot_id')
         logger.debug(f'Shoot number {internal_shoot_id = }')
         # Добавляем задачу в очередь
-        await add_upload_task(final_path, file.file_name, credit, message.chat.id, internal_shoot_id)
+        await add_upload_task(final_path, file.file_name, credit, message.chat.id, internal_shoot_id, file_caption)
 
         await message.answer(
             text=f'Файл {file.file_name} принят в обработку. Ожидайте завершения.'

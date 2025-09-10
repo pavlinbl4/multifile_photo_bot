@@ -42,7 +42,9 @@ def web_photo_uploader(
         path_to_file: str,
         image_caption: str,
         author: str,
-        internal_shoot_id: str
+        internal_shoot_id: str,
+        file_caption: str,
+
 ):
     """Upload a photo to the web archive."""
     try:
